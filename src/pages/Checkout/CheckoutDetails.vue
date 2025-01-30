@@ -342,7 +342,12 @@ v
           </div> -->
         </div>
 
-        <div class="total no-wrap row justify-center q-mt-md items-center">
+        <div class="total no-wrap column justify-center q-mt-md items-center">
+          <!-- {{ paymentKind }} -->
+          <div class="q-gutter-sm q-mb-md">
+            <q-radio v-model="paymentKind" val="DIRECT" label="Direct" />
+            <q-radio v-model="paymentKind" val="ESCROW" label="Escrow" />
+          </div>
           <q-btn
             class="apply bg-primary q-px-xl q-mt-md"
             no-caps
@@ -392,6 +397,7 @@ let statesList = ref([]);
 let cityList = ref([]);
 let countriesBaseArr = [];
 let country_code = ref("");
+let paymentKind = ref("DIRECT");
 watch(
   () => authStore.token,
   (newValue, oldValue) => {
@@ -623,46 +629,93 @@ const createOrder = () => {
   }
 };
 const initPayment = () => {
-  Loading.show({
-    spinner: QSpinnerRings,
-    spinnerColor: "yellow",
-    spinnerSize: 140,
-    message: "Initializing payment...",
-    messageColor: "white",
-  });
-  // customer/payment/initialize
-  authAxios
-    .post("customer/order/payment/initialize")
-    .then((response) => {
-      console.log(response);
-      loadBtn.value = false;
-      Notify.create({
-        message: response.data.message,
-        color: "green",
-        position: "top",
-      });
-      cartStore.cart = [];
-
-      // cartStore.orderDetail = response.data.data;
-      console.log(response.data.data.paystack);
-      Loading.hide();
-      window.location.href = response.data.data.data.authorization_url;
-      // router.replace({ name: "order.tracking" });
-    })
-    .catch(({ response }) => {
-      Loading.hide();
-      loadBtn.value = false;
-      errors.value = response.data.data.errors;
-      console.log(
-        Object.values(response.data.data.errors).map((error) => error + ",")
-      );
-      Notify.create({
-        message: response.data.message,
-        color: "red",
-        position: "top",
-        actions: [{ icon: "close", color: "white" }],
-      });
+  if (paymentKind.value === "DIRECT") {
+    Loading.show({
+      spinner: QSpinnerRings,
+      spinnerColor: "yellow",
+      spinnerSize: 140,
+      message: "Initializing payment...",
+      messageColor: "white",
     });
+    // customer/payment/initialize
+    authAxios
+      .post("customer/order/payment/initialize", {
+        account_type: paymentKind.value,
+      })
+      .then((response) => {
+        console.log(response);
+        loadBtn.value = false;
+        Notify.create({
+          message: response.data.message,
+          color: "green",
+          position: "top",
+        });
+        cartStore.cart = [];
+
+        // cartStore.orderDetail = response.data.data;
+        console.log(response.data.data.paystack);
+        Loading.hide();
+        window.location.href = response.data.data.data.authorization_url;
+        // router.replace({ name: "order.tracking" });
+      })
+      .catch(({ response }) => {
+        Loading.hide();
+        loadBtn.value = false;
+        errors.value = response.data.data.errors;
+        console.log(
+          Object.values(response.data.data.errors).map((error) => error + ",")
+        );
+        Notify.create({
+          message: response.data.message,
+          color: "red",
+          position: "top",
+          actions: [{ icon: "close", color: "white" }],
+        });
+      });
+  } else {
+    Loading.show({
+      spinner: QSpinnerRings,
+      spinnerColor: "yellow",
+      spinnerSize: 140,
+      message: "Initializing payment...",
+      messageColor: "white",
+    });
+    // customer/payment/initialize
+    authAxios
+      .post("customer/order/payment/initialize", {
+        account_type: paymentKind.value,
+      })
+      .then((response) => {
+        console.log(response);
+        loadBtn.value = false;
+        Notify.create({
+          message: response.data.message,
+          color: "green",
+          position: "top",
+        });
+        cartStore.cart = [];
+
+        // cartStore.orderDetail = response.data.data;
+        console.log(response.data.data.paystack);
+        Loading.hide();
+        window.location.href = response.data.data.data.authorization_url;
+        // router.replace({ name: "order.tracking" });
+      })
+      .catch(({ response }) => {
+        Loading.hide();
+        loadBtn.value = false;
+        errors.value = response.data.data.errors;
+        console.log(
+          Object.values(response.data.data.errors).map((error) => error + ",")
+        );
+        Notify.create({
+          message: response.data.message,
+          color: "red",
+          position: "top",
+          actions: [{ icon: "close", color: "white" }],
+        });
+      });
+  }
 };
 
 onMounted(async () => {

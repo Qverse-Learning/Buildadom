@@ -55,7 +55,7 @@
           }}</q-tooltip>
         </q-btn>
 
-        <q-btn
+        <!-- <q-btn
           color="primary"
           icon-right="archive"
           label="Export to csv"
@@ -63,6 +63,16 @@
           class="export"
           padding="xs"
           v-if="rows.length"
+          @click="exportTable"
+        /> -->
+        <q-btn
+          v-if="rows && rows.length"
+          color="primary"
+          icon-right="archive"
+          label="Export to csv"
+          no-caps
+          class="export"
+          padding="xs"
           @click="exportTable"
         />
       </template>
@@ -97,23 +107,27 @@ const columns = [
     field: "amount",
     sortable: true,
   },
-  {
-    name: "code",
-    required: true,
-    label: "Name",
-    align: "left",
-    field: "code",
-    sortable: true,
-  },
 
   {
-    name: "description",
-    required: true,
-    label: "Description",
-    align: "left",
-    field: "description",
-    sortable: true,
+  name: "name",
+  required: true,
+  label: "Name",
+  align: "left",
+  field: (row) => {
+    if (!row.user) return "N/A"; // Handle missing user object
+    return `${row.user?.firstname || ""} ${row.user?.lastname || ""}`.trim() || "N/A";
   },
+  sortable: true,
+},
+
+  // {
+  //   name: "description",
+  //   required: true,
+  //   label: "Description",
+  //   align: "left",
+  //   field: "description",
+  //   sortable: true,
+  // },
 
   {
     name: "created_at",
@@ -128,6 +142,7 @@ const columns = [
       }),
     sortable: true,
   },
+
   // {
   //   name: "actions",
   //   required: true,
@@ -188,25 +203,30 @@ export default {
       },
     };
   },
+  // computed: {
+  //   filteredKeys() {
+  //     const omittedProperties = [
+  //       "id",
+  //       "accpetance_fee_payment_status",
+  //       "amount",
+  //       "deleted_at",
+  //       "is_applied",
+  //       "password",
+  //       "reference",
+  //       "tuition_payment_status",
+  //       "application_payment_status",
+  //       "created_at",
+  //       "updated_at",
+  //     ];
+  //     return Object.keys(this.viewMerchantDetailsObj).filter(
+  //       (key) => !omittedProperties.includes(key)
+  //     );
+  //   },
+  // },
   computed: {
-    filteredKeys() {
-      const omittedProperties = [
-        "id",
-        "accpetance_fee_payment_status",
-        "amount",
-        "deleted_at",
-        "is_applied",
-        "password",
-        "reference",
-        "tuition_payment_status",
-        "application_payment_status",
-        "created_at",
-        "updated_at",
-      ];
-      return Object.keys(this.viewMerchantDetailsObj).filter(
-        (key) => !omittedProperties.includes(key)
-      );
-    },
+    hasRows() {
+      return Array.isArray(this.rows) && this.rows.length > 0;
+    }
   },
   mounted() {
     this.onRequest({
@@ -237,23 +257,41 @@ export default {
         console.error(error);
       }
     },
+    // onRequest(props) {
+    //   // let type = this.$router.currentRoute.value.params.id;
+    //   this.loading = true;
+    //   const url = `admin/payment/list`;
+    //   this.curl = url;
+    //   authAxios
+    //     .get(url)
+    //     .then(({ data }) => {
+    //       console.log(data);
+    //       this.loading = true;
+    //       this.rows = data.data.data;
+    //     })
+    //     .catch(({ response }) => {
+    //       this.loading = false;
+    //       this.rows = [];
+    //     });
+    // },
+
     onRequest(props) {
-      // let type = this.$router.currentRoute.value.params.id;
       this.loading = true;
       const url = `admin/payment/list`;
       this.curl = url;
       authAxios
         .get(url)
         .then(({ data }) => {
-          console.log(data);
+          console.log("API Response:", data); // Log API response
+          this.rows = Array.isArray(data.data) ? data.data : []; // Ensure it's an array
           this.loading = false;
-          this.rows = data.data.data;
         })
         .catch(({ response }) => {
           this.loading = false;
-          this.rows = [];
+          this.rows = []; // Reset to an empty array if the request fails
         });
     },
+
 
     refreshPage() {
       if (this.curl !== "") {

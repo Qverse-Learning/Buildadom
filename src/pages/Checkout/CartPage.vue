@@ -36,7 +36,7 @@ v
                   <div>
                     <h6 class="smallText">{{ props.row.product.name }}</h6>
                     <p class="smallerText q-mt-sm">
-                      {{ props.row.product.description }}
+                      {{ truncateText(props.row.product.description, 50) }}
                     </p>
                   </div>
                 </div>
@@ -313,6 +313,11 @@ const onRequest = (props) => {
   // rows.value = cartStore.cart;
   console.log(rows.value);
 };
+
+function truncateText(text, length) {
+  if (!text) return '';
+  return text.length > length ? text.slice(0, length) + '...' : text;
+}
 
 onMounted(async () => {
   try {

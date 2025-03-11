@@ -7,6 +7,7 @@ export const useMyAuthStore = defineStore("buildadomauth", {
     modals: false,
     userdetails: {},
     storedetails: {},
+    kycdetails: {},
     userstores: [],
     token: "",
   }),
@@ -19,16 +20,17 @@ export const useMyAuthStore = defineStore("buildadomauth", {
   },
   actions: {
     setUserDetails(response) {
-      console.log(response);
+      //console.log(response);
       const token = response.data.data.token;
       const user = response.data.data.user;
+      const kyc = response. data.data.kyc_verification;
       const stores = response.data.data.stores ? response.data.data.stores : [];
       localStorage.setItem("token", token);
       localStorage.setItem("userdet", JSON.stringify(user));
-      console.log(token);
       this.userdetails = user;
       this.userstores = stores;
       this.token = token;
+      this.kycdetails = kyc
     },
 
     async logOut(userdetails) {

@@ -49,10 +49,10 @@
                   </q-item-section>
                 </q-item>
                 <q-item
-                  :class="currentSortOption === 'delivered' ? 'bg-grey-3' : ''"
+                  :class="currentSortOption === 'fulfilled' ? 'bg-grey-3' : ''"
                   clickable
                   v-close-popup
-                  @click="sortOrders('delivered')"
+                  @click="sortOrders('fulfilled')"
                 >
                   <q-item-section>
                     <q-item-label>Delivered</q-item-label>
@@ -138,7 +138,7 @@
                     props.row.status !== 'dispatched' &&
                     props.row.status !== 'declined' &&
                     props.row.status !== 'accepted' &&
-                    props.row.status !== 'delivered' &&
+                    props.row.status !== 'fulfilled' &&
                     props.row.status !== 'processed'
                   "
                   no-caps
@@ -190,7 +190,7 @@
                   no-caps
                   disable
                   text-color="blue-7"
-                  v-if="props.row.status === 'delivered'"
+                  v-if="props.row.status === 'fulfilled'"
                   size="md"
                   :loading="loaders.save[props]"
                 >
@@ -202,7 +202,7 @@
                     props.row.status !== 'accepted' &&
                     props.row.status !== 'declined' &&
                     props.row.status !== 'dispatched' &&
-                    props.row.status !== 'delivered'
+                    props.row.status !== 'fulfilled'
                   "
                   >|</span
                 >
@@ -215,7 +215,7 @@
                     props.row.status !== 'dispatched' &&
                     props.row.status !== 'declined' &&
                     props.row.status !== 'accepted' &&
-                    props.row.status !== 'delivered' &&
+                    props.row.status !== 'fulfilled' &&
                     props.row.status !== 'processed'
                   "
                   no-caps
@@ -230,7 +230,7 @@
                   flat
                   v-if="
                     props.row.status !== 'declined' &&
-                    props.row.status !== 'delivered'
+                    props.row.status !== 'fulfilled'
                   "
                   no-wrap
                   label="Track order"
@@ -436,8 +436,8 @@ const sortedOrders = computed(() => {
     case "dispatched":
       sorted = sorted.filter((order) => order.status === "dispatched");
       break;
-    case "delivered":
-      sorted = sorted.filter((order) => order.status === "delivered");
+    case "fulfilled":
+      sorted = sorted.filter((order) => order.status === "fulfilled");
       break;
   }
 

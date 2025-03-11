@@ -101,6 +101,7 @@
                     </div>
 
                     <q-btn
+                      v-if="store.kycdetails.status === 'verified'"
                       color="primary"
                       label="View Dashboard"
                       :to="{
@@ -205,6 +206,7 @@
 import { useMyAuthStore } from "src/stores/auth";
 import { ref } from "vue";
 let store = useMyAuthStore();
+
 import { useCartStore } from "src/stores/cart";
 let cartStore = useCartStore();
 let leftDrawerOpen = ref(true);

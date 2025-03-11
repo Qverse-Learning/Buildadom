@@ -140,6 +140,7 @@
                     </div>
 
                     <q-btn
+                      v-if="store.kycdetails.status === 'verified'"
                       color="green-7"
                       label="View Dashboard"
                       :to="{
@@ -228,6 +229,7 @@ import { useMyAuthStore } from "src/stores/auth";
 import { ref } from "vue";
 import { useRoute } from "vue-router";
 let store = useMyAuthStore();
+console.log(store.kycdetails);
 import { useCartStore } from "src/stores/cart";
 let route = useRoute();
 let cartStore = useCartStore();

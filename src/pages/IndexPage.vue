@@ -45,7 +45,7 @@
             name:
               store.token && store.userdetails.type === 'individual'
                 ? 'dashboard'
-                : 'individual.register',
+                : 'merchant.register',
           }"
         >
           {{ store.token ? "Goto dashboard" : "Sign up now" }}

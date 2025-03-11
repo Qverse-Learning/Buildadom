@@ -7,7 +7,7 @@
             <div class="left">Mon-Sat : <span>9:00am - 5:00pm</span></div>
             <div style="gap: 0.5rem" class="middle row items-center no-wrap">
               <p>For advert placements & store features on Buildadom</p>
-              <router-link to="">Contact Us</router-link>
+              <router-link :to="{name : 'contact'}">Contact Us</router-link>
             </div>
             <div class="right">
               <p>
@@ -108,6 +108,7 @@
                       }}
                     </div>
                     <q-btn
+                      v-if="store.kycdetails.status === 'verified'"
                       color="green-7"
                       label="View Dashboard"
                       :to="{
@@ -140,7 +141,7 @@
                 </q-menu>
               </q-btn>
 
-              <q-btn
+              <!-- <q-btn
                 v-if="!store.token"
                 :to="{
                   name: 'merchant.register',
@@ -150,7 +151,37 @@
                 no-wrap
                 rounded
                 label="Sign in"
-              />
+              /> -->
+              <q-btn-dropdown
+                v-if="!store.token"
+                no-caps
+                no-wrap
+                rounded
+                color="primary"
+                label="Sign in"
+              >
+                <q-list>
+                  <q-item
+                    clickable
+                    v-close-popup
+                    :to="{ name: 'customer.login' }"
+                  >
+                    <q-item-section>
+                      <q-item-label>Login as a customer</q-item-label>
+                    </q-item-section>
+                  </q-item>
+
+                  <q-item
+                    clickable
+                    v-close-popup
+                    :to="{ name: 'merchant.login' }"
+                  >
+                    <q-item-section>
+                      <q-item-label>Login as a merchant</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </q-list>
+              </q-btn-dropdown>
               <q-btn @click="drawer = !drawer" class="expand_cats" flat>
                 <i class="fa-solid text-black fa-bars"></i>
               </q-btn>

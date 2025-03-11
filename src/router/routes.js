@@ -14,6 +14,11 @@ const routes = [
         name: "stores",
       },
       {
+        path: "/contact-us",
+        component: () => import("pages/ContactPage.vue"),
+        name: "contact",
+      },
+      {
         path: "/store/detail",
         component: () => import("pages/StoreDetail.vue"),
         name: "store.detail",

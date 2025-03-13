@@ -3,7 +3,7 @@
     <div class="auth">
       <div class="q-mt-lg">
         <div class="row items-center justify-between">
-          <h4 class="bigMediumText">Escrow Information</h4>
+          <h4 class="bigMediumText">Payment Information</h4>
           <div></div>
         </div>
 
@@ -15,7 +15,7 @@
               <img src="../../assets/escrowtotalamt.svg" alt="" />
             </div>
             <div>
-              <h6>Total Escrow Amount</h6>
+              <h6>Total Amount Paid</h6>
               <h4 class="text1">$20,000</h4>
             </div>
           </div>
@@ -24,7 +24,7 @@
               <img src="../../assets/productreleased.svg" alt="" />
             </div>
             <div>
-              <h6>Product Released</h6>
+              <h6>Total Pending Payment</h6>
               <h4 class="text1">25</h4>
             </div>
           </div>
@@ -33,7 +33,16 @@
               <img src="../../assets/productpending.svg" alt="" />
             </div>
             <div>
-              <h6>Product Pending</h6>
+              <h6>Total Escrow Payment</h6>
+              <h4 class="text1">15</h4>
+            </div>
+          </div>
+          <div style="gap: 1rem" class="row items-center no-wrap">
+            <div class="img">
+              <img src="../../assets/productpending.svg" alt="" />
+            </div>
+            <div>
+              <h6>Total Direct Payment</h6>
               <h4 class="text1">15</h4>
             </div>
           </div>

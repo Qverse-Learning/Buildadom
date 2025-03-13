@@ -19,7 +19,17 @@ const routes = [
         name: "contact",
       },
       {
-        path: "/store/detail",
+        path: "/privacy-policy",
+        component: () => import("pages/PrivacyPolicyPage.vue"),
+        name: "privacy.policy",
+      },
+      {
+        path: "/orders-and-returns",
+        component: () => import("pages/OrdersAndReturnsPage.vue"),
+        name: "orders.returns",
+      },
+      {
+        path: "/store/detail/",
         component: () => import("pages/StoreDetail.vue"),
         name: "store.detail",
       },

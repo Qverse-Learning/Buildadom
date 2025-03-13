@@ -40,6 +40,7 @@
             <q-td :props="props">
               <div>
                 <q-btn
+                  v-if="props.row.status === 'placed'"
                   @click="cancelOrder(props.row)"
                   flat
                   no-wrap
@@ -51,8 +52,9 @@
                   Cancel Order
                 </q-btn>
 
-                <span>|</span>
+                <span v-if="props.row.status === 'placed'">|</span>
                 <q-btn
+                  v-if="props.row.status === 'placed'"
                   flat
                   no-wrap
                   no-caps
@@ -63,6 +65,12 @@
                 >
                   Delete Order
                 </q-btn>
+              </div>
+            </q-td>
+          </template>
+          <template v-slot:body-cell-order_action="props">
+            <q-td :props="props">
+              <div>
                 <q-btn
                   :to="{
                     name: 'order.tracking.new',
@@ -75,7 +83,7 @@
                   flat
                   color="primary"
                 >
-                  Track order
+                  Order Details
                 </q-btn>
               </div>
             </q-td>
@@ -159,6 +167,14 @@ const columns = [
     name: "actions",
     required: true,
     label: "Actions",
+    align: "left",
+    field: (row) => row.id,
+    sortable: false,
+  },
+  {
+    name: "order_action",
+    required: true,
+    label: "Order Detail",
     align: "left",
     field: (row) => row.id,
     sortable: false,

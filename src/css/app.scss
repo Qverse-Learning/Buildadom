@@ -339,7 +339,7 @@ hr {
   }
 }
 .stores_list::-webkit-scrollbar {
-  display: none;
+  // display: none;
 }
 .profile_field {
   border-radius: 10px;
@@ -745,7 +745,7 @@ hr {
 }
 
 .escrow_top_area {
-  display: grid;
+  display: inline-flex;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 1rem;
   background: #f5f7ff;

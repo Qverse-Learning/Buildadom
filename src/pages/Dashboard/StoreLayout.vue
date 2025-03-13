@@ -116,7 +116,7 @@
                 clickable
                 v-ripple
               >
-                <q-item-section> Account and Payment (Escrow) </q-item-section>
+                <q-item-section> Transfer Payments </q-item-section>
               </q-item>
               <q-item
                 :to="{ name: 'customer.orders' }"

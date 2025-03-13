@@ -54,13 +54,13 @@
               <router-link to="">About Us</router-link>
             </li> -->
             <li>
-              <router-link to="">Privacy Policy</router-link>
+              <router-link :to="{name : 'privacy.policy'}">Privacy Policy</router-link>
             </li>
             <li>
-              <router-link to="">Orders and Returns</router-link>
+              <router-link :to="{name : 'orders.returns'}">Orders and Returns</router-link>
             </li>
             <li>
-              <router-link to="">Contact Us</router-link>
+              <router-link :to="{name : 'contact'}">Contact Us</router-link>
             </li>
           </ul>
         </div>

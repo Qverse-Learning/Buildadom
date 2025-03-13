@@ -49,8 +49,8 @@
           </div>
         </div>
         <div class="stores_list q-mb-xl">
-          <q-item v-for="(cat, index) in productCategoryListArr" :key="index"
-            >{{ cat.name }}
+          <q-item v-for="(cat, index) in productCategoryListArr" :key="index" clickable @click="selectedCategory = cat" :class="{'text-primary': selectedCategory && selectedCategory.id === cat.id}">
+            {{ cat.name }}
           </q-item>
         </div>
       </div>
@@ -111,9 +111,16 @@ let addProductModal = ref(false);
 let productCategoryListArr = ref([]);
 let prodListArr = ref([]);
 let storeDetails = ref({});
+let selectedCategory = ref(null);
 
 const filteredProducts = computed(() => {
   let filtered = [...prodListArr.value];
+
+  if (selectedCategory.value) {
+    filtered = filtered.filter((product) =>
+      product.category.id === selectedCategory.value.id
+    );
+  }
 
   if (searchQuery.value.trim() !== "") {
     filtered = filtered.filter((product) =>
@@ -123,6 +130,7 @@ const filteredProducts = computed(() => {
 
   return filtered;
 });
+
 
 const getProducts = async () => {
   try {

@@ -6,7 +6,7 @@ v
     </div>
     <div v-else class="container">
       <div class="row items-center no-wrap justify-between">
-        <h4 class="bigText q-pa-sm q-mb-md">Order Tracking</h4>
+        <h4 class="bigText q-pa-sm q-mb-md">Order Tracking & Confirmation</h4>
         <div class=""></div>
       </div>
 
@@ -14,7 +14,11 @@ v
         {{
           data.status === "delivered"
             ? "Your order has been delivered"
-            : "Your Order is on the way"
+            : data.status === "placed"
+            ? "Your order has been placed and it`s waiting to be processed"
+            : data.status === "processed"
+            ? "Your order has been processed and it`s waiting to be dispatched"
+            : "Your order is on the way"
         }}
       </h6>
       <q-separator class="q-my-sm" />
@@ -144,7 +148,7 @@ v
             </q-timeline-entry> -->
           </q-timeline>
 
-          <div v-if="data.status !== 'declined'">
+          <div v-if="data.status !== 'declined' && data.status === 'fulfilled'">
             <h6>Confirm Order Received</h6>
             <q-separator class="q-my-sm" />
 
@@ -433,7 +437,7 @@ const submitOrderConfirmation = () => {
           messageColor: "white",
         });
         authAxios
-          .post(`customer/order/delivery/confirm`, {
+          .post(`customer/order/fulfillment/confirm`, {
             order_id: route.query.order_id,
             payment_authorized: confirmData.value.payment ? 1 : 0,
             confirmation_code: confirmData.value.code,

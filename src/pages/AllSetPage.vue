@@ -19,7 +19,7 @@
             rounded
             v-if="stores.userdetails.type === 'individual'"
             color="primary"
-            >Goto Dashboard</q-btn
+            >Go to Dashboard</q-btn
           >
           <q-btn
             :to="{

@@ -8,7 +8,7 @@
               <div class="sign column text-center items-center">
                 <img
                   style="width: 166px; height: 166px"
-                  src="/images/ordersuccess.webp"
+                  src="/images/ordersuccess.png"
                   alt=""
                 />
                 <div class="head text-h4 text-weight-bold text-center q-my-md">

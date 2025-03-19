@@ -15,8 +15,8 @@
               <img src="../../assets/escrowtotalamt.svg" alt="" />
             </div>
             <div>
-              <h6>Total Amount Paid</h6>
-              <h4 class="text1">$20,000</h4>
+              <h6>Total Payment Received</h6>
+              <h4 class="text1">{{ currencyCode }} {{ totalAmountPaid.toLocaleString() }}</h4>
             </div>
           </div>
           <div style="gap: 1rem" class="row items-center no-wrap">
@@ -24,20 +24,12 @@
               <img src="../../assets/productreleased.svg" alt="" />
             </div>
             <div>
-              <h6>Total Pending Payment</h6>
-              <h4 class="text1">25</h4>
+              <h6>Total Quantity</h6>
+              <h4 class="text1">{{ totalQuantity.toLocaleString() }}</h4>
             </div>
           </div>
-          <div style="gap: 1rem" class="row items-center no-wrap">
-            <div class="img">
-              <img src="../../assets/productpending.svg" alt="" />
-            </div>
-            <div>
-              <h6>Total Escrow Payment</h6>
-              <h4 class="text1">15</h4>
-            </div>
-          </div>
-          <div style="gap: 1rem" class="row items-center no-wrap">
+
+          <!-- <div style="gap: 1rem" class="row items-center no-wrap">
             <div class="img">
               <img src="../../assets/productpending.svg" alt="" />
             </div>
@@ -45,7 +37,7 @@
               <h6>Total Direct Payment</h6>
               <h4 class="text1">15</h4>
             </div>
-          </div>
+          </div> -->
         </div>
 
         <div style="gap: 1rem" class="sortbtns row items-center">
@@ -55,16 +47,16 @@
             @click="setView('Pending')"
             flat
             :class="view === 'Pending' ? 'text-weight-bold active' : ''"
-            >Pending Release</q-btn
+            >Payment Details</q-btn
           >
-          <q-btn
+          <!-- <q-btn
             no-wrap
             no-caps
             @click="setView('Released')"
             flat
             :class="view === 'Released' ? 'text-weight-bold active' : ''"
             >Released Funds</q-btn
-          >
+          > -->
         </div>
         <q-table
           :rows="rows"
@@ -83,15 +75,14 @@
                 <div>
                   <img
                     style="width: 120.957px; height: 107px"
-                    src="../../assets/box.png"
-                    alt=""
+                    :src="props.row.image || 'default-image.png'"
+                    alt="Product Image"
                   />
                 </div>
                 <div>
                   <h6 class="smallText">{{ props.row.product }}</h6>
                   <p class="smallerText q-mt-md">
-                    EX DISPLAY : MSI Pro 16 Flex-036AU <br />
-                    15.6 MULTITOUCH All-In-On...
+                    {{ props.row.description }}
                   </p>
                 </div>
               </div>
@@ -100,18 +91,22 @@
 
           <template v-slot:body-cell-status="props">
             <q-td :props="props">
+              
               <p
-                v-if="view === 'Pending'"
-                class="bg-yellow-2 text-center q-pa-sm text-yellow-10"
-              >
-                Pending
-              </p>
-              <p
-                v-if="view === 'Released'"
+                v-if="props.row.status === 'PROCESSED'"
                 class="bg-green-2 text-center q-pa-sm text-green-10"
               >
-                Released
+                Processed
               </p>
+
+
+              <!-- Button for Processed Payments -->
+              <!-- <q-btn
+                v-if="props.row.status === 'PROCESSED'"
+                label="View Details"
+                color="green"
+                @click="viewDetails(props.row)"
+              /> -->
             </q-td>
           </template>
 
@@ -128,7 +123,7 @@
 
 <script setup>
 import { authAxios } from "src/boot/axios";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, computed } from "vue";
 
 let loading = ref(false);
 let view = ref("Pending");
@@ -145,7 +140,7 @@ const columns = [
   {
     name: "amount",
     required: true,
-    label: "Release Status",
+    label: "Amount per qty",
     align: "left",
     field: "amount",
     sortable: true,
@@ -193,39 +188,75 @@ let loaders = ref({
   deleteBtn: [],
   save: [],
 });
-let rows = ref([
-  // {
-  //   product: "Emulsion Pain",
-  //   amount: "$70.00",
-  //   quantity: "4",
-  //   date: "April 8th 2023",
-  //   reviews: "2",
-  // },
-  // {
-  //   product: "Emulsion Pain",
-  //   amount: "$70.00",
-  //   quantity: "4",
-  //   date: "April 8th 2023",
-  //   reviews: "5",
-  // },
-]);
+let currencyCode = ref("");
+const formatDate = (datetimeString) => {
+  const date = new Date(datetimeString);
+  return new Intl.DateTimeFormat("en-US", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "numeric",
+    minute: "numeric",
+    hour12: true,
+  }).format(date);
+};
+let rows = ref([]);
 const setView = (viewArg) => {
   view.value = viewArg;
 };
-const onRequest = (props) => {
+
+const totalAmountPaid = computed(() => {
+  return rows.value.reduce((sum, item) => {
+    // Extract only the numeric part using regex
+    const amount = parseFloat(item.amount.replace(/[^0-9.]/g, "")) || 0;
+    return sum + amount;
+  }, 0);
+});
+
+const totalQuantity = computed(() => {
+  return rows.value.reduce((sum, item) => {
+    return sum + (parseInt(item.quantity) || 0);
+  }, 0);
+});
+
+const onRequest = () => {
   loading.value = true;
 
   authAxios
     .get(`merchant/payment/list`)
     .then(({ data }) => {
-      console.log(data);
-      rows.value = data.data.data;
+      console.log("API Response:", data);
+      
+      // Ensure data exists before mapping
+      if (data?.data?.data) {
+        // Extract the currency code (assuming it's consistent for all items)
+        if (data.data.data.length > 0) {
+          currencyCode.value = data.data.data[0]?.currency?.code || "";
+        }
+
+        // Map the response to the rows
+        rows.value = data.data.data.map(item => ({
+          product: item.settlement?.order?.product?.name || "Unknown Product",
+          image: item.settlement?.order?.product?.images?.[0]?.url || "",
+          description: item.settlement?.order?.product?.description || "",
+          amount: item.currency?.symbol 
+            ? `${item.currency.symbol} ${parseFloat(item.settlement?.order?.amount || 0).toFixed(2)}` 
+            : `N/A`,
+          quantity: item.settlement?.order?.quantity || 0,
+          date: formatDate(item.settlement?.created_at) || "N/A",
+          status: item.settlement?.status || "Pending" // Default status
+        }));
+      }
+
       loading.value = false;
     })
-    .catch(({ response }) => {
+    .catch(error => {
+      console.error("Error fetching data:", error);
       loading.value = false;
     });
 };
+
+
 
 onMounted(async () => {
   try {

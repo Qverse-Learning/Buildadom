@@ -31,7 +31,7 @@
                 : 'merchant.register',
           }"
         >
-          {{ store.token ? "Goto dashboard" : "Sign up now" }}
+          {{ store.token ? "Go to dashboard" : "Sign up now" }}
         </q-btn>
         <q-btn
           v-else
@@ -48,7 +48,7 @@
                 : 'merchant.register',
           }"
         >
-          {{ store.token ? "Goto dashboard" : "Sign up now" }}
+          {{ store.token ? "Go to dashboard" : "Sign up now" }}
         </q-btn>
 
         <q-btn

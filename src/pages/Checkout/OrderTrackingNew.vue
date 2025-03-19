@@ -73,16 +73,16 @@ v
               </q-timeline-entry>
 
               <q-timeline-entry
-                :title="data.trackings[2]?.status === 'fulfilled' ? 'Order Arrived' : 'Order Arrival'"
+                :title="data.trackings[1]?.status === 'dispatched' ? 'Order Arrival' : 'Order Arrived'"
                 :subtitle="data.trackings[2]?.status === 'fulfilled' ? formatDate(data.trackings[2]?.updated_at) : 'Awaiting'"
                 v-if="data.trackings[1]?.status === 'dispatched'"
                 side="left"
-                :color="data.trackings[2]?.status === 'dispatched' ? 'grey' : 'primary'"
-                :icon="data.trackings[2]?.status === 'dispatched' ? 'fa-solid fa-clock' : 'fa-solid fa-check'"
+                :color="data.trackings[2]?.status === 'fulfilled' ? 'primary' : 'grey'"
+                :icon="data.trackings[2]?.status === 'fulfilled' ? 'fa-solid fa-check' : 'fa-solid fa-clock'"
               >
               <div>
               {{
-                data.trackings[1]?.status === 'dispatched'
+                data.trackings[2]?.status === 'fulfilled'
                   ? 'Your driver has arrived!'
                   : 'You will be notified when your driver gets to you'
               }}

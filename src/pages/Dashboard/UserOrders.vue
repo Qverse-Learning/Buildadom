@@ -36,6 +36,28 @@
               </div>
             </q-td>
           </template>
+
+          <template v-slot:body-cell-order_action="props">
+            <q-td :props="props">
+              <div>
+                <q-btn
+                  :to="{
+                    name: 'order.tracking.new',
+                    query: {
+                      order_id: props.row.id,
+                    },
+                  }"
+                  no-caps
+                  no-wrap
+                  flat
+                  color="primary"
+                >
+                  Order Details
+                </q-btn>
+              </div>
+            </q-td>
+          </template>
+
           <template v-slot:body-cell-actions="props">
             <q-td :props="props">
               <div>
@@ -64,26 +86,6 @@
                   :loading="loaders.save[props]"
                 >
                   Delete Order
-                </q-btn>
-              </div>
-            </q-td>
-          </template>
-          <template v-slot:body-cell-order_action="props">
-            <q-td :props="props">
-              <div>
-                <q-btn
-                  :to="{
-                    name: 'order.tracking.new',
-                    query: {
-                      order_id: props.row.id,
-                    },
-                  }"
-                  no-caps
-                  no-wrap
-                  flat
-                  color="primary"
-                >
-                  Order Details
                 </q-btn>
               </div>
             </q-td>
@@ -140,21 +142,6 @@ const columns = [
     field: "tracking_number",
     sortable: true,
   },
-
-  // {
-  //   name: "created_at",
-  //   required: true,
-  //   label: "Created At",
-  //   align: "left",
-  //   field: (row) =>
-  //     new Date(row.created_at).toLocaleDateString("en-US", {
-  //       day: "numeric",
-  //       month: "long",
-  //       year: "numeric",
-  //     }),
-  //   sortable: true,
-  // },
-
   {
     name: "status",
     required: true,
@@ -164,17 +151,17 @@ const columns = [
     sortable: false,
   },
   {
-    name: "actions",
+    name: "order_action",
     required: true,
-    label: "Actions",
+    label: "Order Detail",
     align: "left",
     field: (row) => row.id,
     sortable: false,
   },
   {
-    name: "order_action",
+    name: "actions",
     required: true,
-    label: "Order Detail",
+    label: "Actions",
     align: "left",
     field: (row) => row.id,
     sortable: false,

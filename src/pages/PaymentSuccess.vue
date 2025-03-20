@@ -29,6 +29,17 @@
 
                   Happy shopping!
                 </p>
+                <q-btn
+                  color="primary"
+                  class="q-px-xl q-py-sm btns__"
+                  rounded
+                  text-color="white"
+                  no-caps
+                  no-wrap
+                  :to="{ name: 'dashboard' }"
+                >
+                  {{ "Go to dashboard"  }}
+                </q-btn>
                 <p
                   v-if="logisticsCompaniesArr.length"
                   style="max-width: 700px; margin: 0 auto"

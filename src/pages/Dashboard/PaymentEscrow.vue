@@ -74,8 +74,9 @@
               <div style="gap: 1rem" class="row no-wrap items-center">
                 <div>
                   <img
+                    v-if = "props.row.image"
                     style="width: 120.957px; height: 107px"
-                    :src="props.row.image || 'default-image.png'"
+                    :src="props.row.image"
                     alt="Product Image"
                   />
                 </div>
@@ -91,7 +92,7 @@
 
           <template v-slot:body-cell-status="props">
             <q-td :props="props">
-              
+
               <p
                 v-if="props.row.status === 'PROCESSED'"
                 class="bg-green-2 text-center q-pa-sm text-green-10"
@@ -154,6 +155,14 @@ const columns = [
     sortable: true,
   },
   {
+    name: "total_amount",
+    required: true,
+    label: "Total Amount",
+    align: "left",
+    field: "total_amount",
+    sortable: true,
+  },
+  {
     name: "date",
     required: true,
     label: "Date",
@@ -207,9 +216,9 @@ const setView = (viewArg) => {
 
 const totalAmountPaid = computed(() => {
   return rows.value.reduce((sum, item) => {
-    // Extract only the numeric part using regex
-    const amount = parseFloat(item.amount.replace(/[^0-9.]/g, "")) || 0;
-    return sum + amount;
+    // Extract only the numeric part using regex and parse it
+    const totalAmount = parseFloat(item.total_amount.replace(/[^0-9.]/g, "")) || 0;
+    return sum + totalAmount;
   }, 0);
 });
 
@@ -226,7 +235,7 @@ const onRequest = () => {
     .get(`merchant/payment/list`)
     .then(({ data }) => {
       console.log("API Response:", data);
-      
+
       // Ensure data exists before mapping
       if (data?.data?.data) {
         // Extract the currency code (assuming it's consistent for all items)
@@ -235,17 +244,42 @@ const onRequest = () => {
         }
 
         // Map the response to the rows
-        rows.value = data.data.data.map(item => ({
-          product: item.settlement?.order?.product?.name || "Unknown Product",
-          image: item.settlement?.order?.product?.images?.[0]?.url || "",
-          description: item.settlement?.order?.product?.description || "",
-          amount: item.currency?.symbol 
-            ? `${item.currency.symbol} ${parseFloat(item.settlement?.order?.amount || 0).toFixed(2)}` 
-            : `N/A`,
-          quantity: item.settlement?.order?.quantity || 0,
-          date: formatDate(item.settlement?.created_at) || "N/A",
-          status: item.settlement?.status || "Pending" // Default status
-        }));
+
+        rows.value = data.data.data.map(item => {
+          if (!item.settlement) {
+            return {
+              product: "",
+              image: null,
+              description: "",
+              amount: "",
+              quantity: "",
+              total_amount: "",
+              date: "",
+              status: "",
+            };
+          }
+
+          const unitAmount = parseFloat(item.settlement.order?.amount || 0);
+          const quantity = parseInt(item.settlement.order?.quantity || 0);
+          const totalAmount = unitAmount * quantity; // Multiplication of amount and quantity
+
+          return {
+            product: item.settlement.order?.product?.name || "Unknown Product",
+            image: item.settlement.order?.product?.images?.[0]?.url || "default-image.png",
+            description: item.settlement.order?.product?.description || "",
+            amount: item.currency?.symbol
+              ? `${item.currency.symbol} ${unitAmount.toFixed(2)}`
+              : "N/A",
+            quantity: quantity,
+            total_amount: item.currency?.symbol
+              ? `${item.currency.symbol} ${totalAmount.toFixed(2)}`
+              : "N/A", // Corrected total amount
+            date: formatDate(item.settlement.created_at) || "N/A",
+            status: item.settlement.status || "Pending",
+          };
+        });
+
+
       }
 
       loading.value = false;

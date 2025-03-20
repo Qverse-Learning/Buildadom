@@ -101,59 +101,9 @@ v
                   code to confirm
                 </div>
               </q-timeline-entry>
-              <!-- <q-timeline-entry
-                title="Order Confirmed"
-                v-if="orderConfirmed"
-                side="left"
-                color="green"
-                icon="fa-solid fa-check"
-              >
-                <div>Your order has been confirmed.</div>
-              </q-timeline-entry> -->
+
             </div>
-            <!-- <q-timeline-entry
-              title="Order Dispatched"
-              :subtitle="formatDate(data.trackings[0].created_at)"
-              side="left"
-              v-if="data.trackings[0].status === 'processed'"
-              color="primary"
-              icon="fa-solid fa-check"
-            >
-              <div>
-                Your order has been processed and will be dispatched to you
-              </div>
-            </q-timeline-entry>
-            <q-timeline-entry
-              title="Order Dispatched"
-              :subtitle="formatDate(data.trackings[1].status.created_at)"
-              side="left"
-              v-if="data.trackings[1].status === 'dispatched'"
-              color="primary"
-              icon="fa-solid fa-check"
-            >
-              <div>Your order is on it’s way to you</div>
-            </q-timeline-entry>
-            <q-timeline-entry
-              title="Order Arrival"
-              subtitle="Awaiting"
-              v-if="data.status === 'dispatched'"
-              side="left"
-            >
-              <div>You will be notified when your driver get’s to you</div>
-            </q-timeline-entry>
-            <q-timeline-entry
-              title="Order Delivered"
-              :subtitle="formatDate(data.trackings[2].created_at)"
-              v-if="data.trackings[2].status === 'delivered'"
-              side="left"
-              color="primary"
-              icon="fa-solid fa-check"
-            >
-              <div>
-                Your order has been delivered, kindly enter your confirmation
-                code to confirm
-              </div>
-            </q-timeline-entry> -->
+            
           </q-timeline>
 
           <div v-if="data.status !== 'declined' && data.status === 'fulfilled'">
@@ -173,6 +123,7 @@ v
               <div class="container confirmForm q-mt-lg">
                 <div class="">
                   <form
+                    v-if="!data.fulfillment.is_confirmed"
                     @submit.prevent="submitOrderConfirmation"
                     class="q-mt-lg"
                   >
@@ -264,25 +215,6 @@ v
                 </p>
               </div>
 
-              <!-- <q-separator class="q-my-md" />
-              <div class="row q-mt-sm justify-between items-center">
-                <p class="smallerText">VAT</p>
-                <p class="smallText">
-                  ₦{{ (totalSumVal * 0.075).toLocaleString() }}
-                </p>
-              </div>
-              <q-separator class="q-my-md" />
-              <div class="row q-mt-sm justify-between items-center">
-                <p class="smallerText">Sub Total</p>
-                <p class="smallText">₦{{ totalSumVal.toLocaleString() }}</p>
-              </div>
-              <q-separator class="q-my-md" />
-              <div class="row q-mt-sm justify-between items-center">
-                <p class="smallerText">Order Total</p>
-                <p class="smallText">
-                  ₦{{ (totalSumVal + totalSumVal * 0.075).toLocaleString() }}
-                </p>
-              </div> -->
             </div>
             <div class="checkout_details no_stick q-mt-lg">
               <h4 class="bigMediumText">Delivery details</h4>
@@ -293,10 +225,7 @@ v
                 </p>
                 <p class="mediumText">4 - 6days</p>
               </div>
-              <!-- <div class="q-my-lg">
-                <p class="smallerText q-mb-md text-info">Order number</p>
-                <p class="mediumText">NL2309443064</p>
-              </div> -->
+
               <div style="gap: 1rem" class="q-my-lg row items-center no-wrap">
                 <p class="smallerText text-info">Store Name:</p>
                 <p class="mediumText">{{ data.store.name }}</p>
@@ -305,15 +234,7 @@ v
                 <p class="smallerText text-info">Store Address:</p>
                 <p class="mediumText">{{ data.store.address }}</p>
               </div>
-              <!-- <div class="q-mt-sm">
-                <h4 class="bigMediumText">Contact Number</h4>
-                <q-separator class="q-mt-md" />
 
-                <div class="">
-                  <p class="smallerText q-mb-md text-info">Courier number</p>
-                  <p class="mediumText">09087663552</p>
-                </div>
-              </div> -->
             </div>
           </div>
         </div>

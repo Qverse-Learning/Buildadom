@@ -332,9 +332,9 @@ v
     <div class="auth">
       <q-card class="billing">
         <div class="text-center q-mb-lg">
-          <div class="bigMediumText">Success!</div>
+          <div class="bigMediumText">Continue to Payment!</div>
           <div class="smallText q-mt-md text-center">
-            You have succesfully placed an order...
+            You have succesfully placed an order, proceed to payment...
           </div>
           <!-- <div class="smallText q-mt-md text-center">
             You have succesfully placed an order , now you can <br />
@@ -344,7 +344,7 @@ v
 
         <div class="total no-wrap column justify-center q-mt-md items-center">
           <!-- {{ paymentKind }} -->
-          <div class="q-gutter-sm q-mb-md">
+          <div class="q-gutter-sm q-mb-md hidden">
             <q-radio v-model="paymentKind" val="DIRECT" label="Direct" />
             <q-radio v-model="paymentKind" val="ESCROW" label="Escrow" />
           </div>
@@ -356,7 +356,7 @@ v
             rounded
             text-color="white"
           >
-            Continue to pay
+            Pay Now
           </q-btn>
           <!-- <q-btn
             class="apply bg-primary q-px-xl q-mt-md"

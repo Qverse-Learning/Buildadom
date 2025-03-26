@@ -1,4 +1,3 @@
-v
 <template>
   <div class="q-my-xl q-pb-xl">
     <div class="container">
@@ -169,9 +168,9 @@ v
             <!-- <p style="opacity: 1" class="smallerText">₦21.00</p> -->
           </div>
           <div class="row q-mt-sm justify-between items-center">
-            <p style="opacity: 1" class="smallerText">VAT(7.5%)</p>
+            <p style="opacity: 1" class="smallerText">VAT({{ vatRate }}%)</p>
             <p style="opacity: 1" class="smallerText">
-              ₦{{ (cartStore.totalPrice * 0.075).toLocaleString() }}
+              ₦{{ (cartStore.totalPrice * vatRate / 100).toLocaleString() }}
             </p>
           </div>
           <!-- <div class="row q-mt-sm justify-between items-center">
@@ -184,7 +183,7 @@ v
               ₦{{
                 (
                   cartStore.totalPrice +
-                  cartStore.totalPrice * 0.075
+                  cartStore.totalPrice * vatRate / 100
                 ).toLocaleString()
               }}
             </p>
@@ -249,12 +248,14 @@ v
 </template>
 
 <script setup>
+import { authAxios } from "src/boot/axios";
 import FooterCompVue from "src/components/FooterComp.vue";
 import { useCartStore } from "src/stores/cart";
 import { onMounted, ref } from "vue";
 
 let cartStore = useCartStore();
 let loading = ref(false);
+let vatRate = ref();
 const columns = [
   {
     name: "product",
@@ -309,9 +310,20 @@ let loaders = ref({
   save: [],
 });
 let rows = ref([]);
+const fetchVAT = async () => {
+  try {
+    const response = await authAxios.get("/fees/show?code=VAT"); // Replace with actual endpoint
+    vatRate.value = response.data.data.amount;
+    // console.log(response.data.data.amount);
+  } catch (error) {
+    console.error("Error fetching VAT:", error);
+  }
+};
+
+
 const onRequest = (props) => {
   // rows.value = cartStore.cart;
-  console.log(rows.value);
+  // console.log(rows.value);
 };
 
 function truncateText(text, length) {
@@ -322,6 +334,7 @@ function truncateText(text, length) {
 onMounted(async () => {
   try {
     onRequest();
+    fetchVAT();
   } catch (error) {
     console.error(error);
   }

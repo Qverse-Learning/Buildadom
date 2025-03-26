@@ -15,8 +15,8 @@
           :to="{
             name: 'store.detail',
             query: {
-              name: storeData.name,
-              id: storeData.id,
+              name: storeData.slug,
+              ref: storeData.ref,
             },
           }"
         >

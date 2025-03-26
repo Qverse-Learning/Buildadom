@@ -9,17 +9,7 @@
         </p>
       </div>
       <div class="">
-        <!-- <q-btn
-          color="primary"
-          class="q-px-md"
-          no-caps
-          :loading="puborUnpubLoadBtn"
-          @click="publishOrUnpublishStore"
-          no-wrap
-          v-if="store.storedetails.name"
-        >
-          {{ store.storedetails.published === false ? "Publish" : "Unublish" }}
-        </q-btn> -->
+
       </div>
     </div>
 
@@ -59,16 +49,7 @@
               {{ errors.description[0] }}
             </small>
           </div>
-          <!-- <div class="input_wrap">
-            <label for="">Country<span>*</span></label>
-            <div class="input">
-              <select v-model="data.country_id" >
-                <option disabled value="">Country</option>
-              </select>
-            </div>
-          </div> -->
 
-          <!-- {{ data }} -->
 
           <div class="input_wrap q-sel">
             <label for=""> Country <span>*</span></label>
@@ -99,7 +80,7 @@
           <div class="input_wrap">
             <label for="">State (select a country) <span>*</span></label>
             <div class="input">
-              <select :disabled="!statesList.length" v-model="data.state_id">
+              <!-- <select :disabled="!statesList.length" v-model="data.state_id">
                 <option disabled value="">Select State</option>
                 <option
                   v-for="(state, index) in statesList"
@@ -108,13 +89,23 @@
                 >
                   {{ state.name }}
                 </option>
-              </select>
+              </select> -->
+              <q-select
+                v-model="basicStoreData.state_id"
+                :options="statesList"
+                label="Select State"
+                option-label="name"
+                option-value="id"
+                emit-value
+                map-options
+
+              />
             </div>
           </div>
           <div class="input_wrap">
             <label for="">City (select a country) <span>*</span></label>
             <div class="input">
-              <select :disabled="!cityList.length" v-model="data.city_id">
+              <!-- <select :disabled="!cityList.length" v-model="data.city_id">
                 <option disabled value="">Select City</option>
                 <option
                   v-for="(city, index) in cityList"
@@ -123,33 +114,19 @@
                 >
                   {{ city.name }}
                 </option>
-              </select>
+              </select> -->
+              <q-select
+                v-model="basicStoreData.city_id"
+                :options="cityList"
+                label="Select City"
+                option-label="name"
+                option-value="id"
+                emit-value
+                map-options
+                
+              />
             </div>
           </div>
-          <!-- <div class="input_wrap">
-            <label for="">City<span>*</span></label>
-            <div class="input">
-              <select v-model="data.city_id" >
-                <option disabled value="">City</option>
-              </select>
-            </div>
-          </div> -->
-          <!-- <div v-if="basicStoreData.country_id.states" class="input_wrap">
-            {{ countriesArr }}
-            <label for="">State<span>*</span></label>
-            <div class="input">
-              <select required v-model="data.state_id" >
-                <option disabled value="">State</option>
-                <option
-                  v-for="(state, index) in basicStoreData.country_id.states"
-                  :key="index"
-                  value=""
-                >
-                  {{ state.name }}
-                </option>
-              </select>
-            </div>
-          </div> -->
 
           <div class="input_wrap">
             <label for="">Address<span>*</span></label>
@@ -224,14 +201,7 @@
               }), #4f4f4f; background-repeat: no-repeat; background-size:cover`"
               class="left"
             >
-              <!-- <img
-                :src="
-                  profileFilePreview
-                    ? profileFilePreview
-                    : '../../assets/frame.png'
-                "
-                alt=""
-              /> -->
+
               <q-file
                 @update:model-value="setProfileFile"
                 accept=".jpg,.png,.svg,.jpeg"
@@ -425,50 +395,7 @@
               </select>
             </div>
           </div>
-          <!-- <q-btn @click="addAttribute" flat no-caps no-wrap color="primary">
-            + Add attributes
-          </q-btn>
-          <div v-for="(attribute, counter) in data.attributes" :key="counter">
-            <div class="input_wrap">
-              <div
-                style="gap: 1rem"
-                class="row items-center justify-between no-wrap"
-              >
-                <label for=""
-                  >Attribute Name({{ counter + 1 }})<span>*</span></label
-                >
-                <q-btn
-                  color="red-7"
-                  size="10px"
-                  rounded
-                  @click="removeAttribute(counter)"
-                >
-                  <i class="fa-solid fa-xmark"></i>
-                </q-btn>
-              </div>
-              <div class="input">
-                <input
-                  v-model="attribute.name"
-                  placeholder="name"
-                  required
-                  type="text"
-                />
-              </div>
-            </div>
-            <div class="input_wrap">
-              <label for=""
-                >Attribute Value({{ counter + 1 }})<span>*</span></label
-              >
-              <div class="input">
-                <input
-                  v-model="attribute.value"
-                  placeholder="value"
-                  required
-                  type="text"
-                />
-              </div>
-            </div>
-          </div> -->
+
 
           <div class="row justify-end q-mt-lg">
             <q-btn
@@ -531,12 +458,39 @@ let errors = ref({});
 let countriesArr = ref([]);
 let countriesBaseArr = [];
 
+// watch(
+//   () => basicStoreData.value.country_id,
+//   (newValue, oldValue) => {
+//     if (newValue?.name !== oldValue?.name) {
+//       getState(newValue);
+//       getCity(newValue);
+//     }
+//   },
+//   { deep: true }
+// );
+
 watch(
   () => basicStoreData.value.country_id,
-  (newValue, oldValue) => {
-    if (newValue?.name !== oldValue?.name) {
-      getState(newValue);
-      getCity(newValue);
+  async (newCountry, oldCountry) => {
+    // console.log("Country selected:", newCountry); // ✅ Debug log
+    if (newCountry?.id !== oldCountry?.id) {
+      basicStoreData.value.state_id = ""; // Reset state
+      basicStoreData.value.city_id = ""; // Reset city
+      // console.log("Fetching states for country:", newCountry.id); // ✅ Debug log
+      await getState(newCountry.id);
+    }
+  },
+  { deep: true }
+);
+
+watch(
+  () => basicStoreData.value.state_id,
+  async (newState, oldState) => {
+    // console.log("State select:", newState); // ✅ Debug log
+    if (newState !== oldState) {
+      basicStoreData.value.city_id = ""; // Reset city when state changes
+      // console.log("Fetching cities for state:", newState); // ✅ Debug log
+      await getCity(basicStoreData.value.country_id.id, newState);
     }
   },
   { deep: true }
@@ -891,32 +845,74 @@ const getProducts = async () => {
     console.error(error);
   }
 };
-const getState = async (country) => {
-  try {
-    let statesListResp = await authAxios.get(
-      `country/states?country_id=${country.id}`
-    );
+// const getState = async (country) => {
+//   try {
+//     let statesListResp = await authAxios.get(
+//       `country/states?country_id=${country.id}`
+//     );
 
-    statesList.value = statesListResp.data.data;
+//     statesList.value = statesListResp.data.data;
+//     Loading.hide();
+//   } catch (error) {
+//     console.error(error);
+//     Loading.hide();
+//   }
+// };
+const getState = async (countryId) => {
+  // console.log("getState() called with country ID:", countryId); // ✅ Debug log
+  try {
+    if (!countryId) {
+      console.error("Missing country ID for getState");
+      return;
+    }
+
+    Loading.show();
+    let response = await authAxios.get(`country/states?country_id=${countryId}`);
+    statesList.value = response.data.data;
+    // console.log("States received:", statesList.value); // ✅ Debug log
     Loading.hide();
   } catch (error) {
-    console.error(error);
+    console.error("Error fetching states:", error);
     Loading.hide();
   }
 };
-const getCity = async (country) => {
-  try {
-    let cityListResp = await authAxios.get(
-      `country/cities?country_id=${country.id}`
-    );
 
-    cityList.value = cityListResp.data.data;
+// const getCity = async (countryId, stateId) => {
+//   console.log("Fetching cities for country ID:", countryId, "State ID:", stateId); // ✅ Debug log
+//   try {
+//     Loading.show();
+//     let cityListResp = await authAxios.get(
+//       `country/cities?country_id=${countryId}&state_id=${stateId}`
+//     );
+
+//     cityList.value = cityListResp.data.data;
+//     console.log("Fetched cities:", cityList.value); // ✅ Debug log
+//     Loading.hide();
+//   } catch (error) {
+//     console.error("Error fetching cities:", error);
+//     Loading.hide();
+//   }
+// };
+
+const getCity = async (countryId, stateId) => {
+  // console.log("getCity() called with country ID:", countryId, "State ID:", stateId); // ✅ Debug log
+  try {
+    if (!countryId || !stateId) {
+      console.error("Missing country or state ID for getCity");
+      return;
+    }
+
+    Loading.show();
+    let response = await authAxios.get(`country/cities?country_id=${countryId}&state_id=${stateId}`);
+    cityList.value = response.data.data;
+    // console.log("Cities received:", cityList.value); // ✅ Debug log
     Loading.hide();
   } catch (error) {
-    console.error(error);
+    console.error("Error fetching cities:", error);
     Loading.hide();
   }
 };
+
 onMounted(async () => {
   try {
     if (route.query.create === "new" && !store.storedetails.name) {

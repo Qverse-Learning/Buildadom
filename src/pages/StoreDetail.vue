@@ -147,7 +147,7 @@ const getProducts = async () => {
 };
 onMounted(async () => {
   try {
-    let storeDataResp = await authAxios.get(`store/show/${route.query.id}`);
+    let storeDataResp = await authAxios.get(`store/show/${route.query.name}`);
     let prodCatList = await authAxios.get("product/category/list");
     console.log(storeDataResp);
     storeDetails.value = storeDataResp.data.data;

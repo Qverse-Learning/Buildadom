@@ -201,7 +201,7 @@ v
                     >State (select a country first) <span>*</span></label
                   >
                   <div class="input">
-                    <select
+                    <!-- <select
                       :disabled="!statesList.length"
                       v-model="data.state_id"
                     >
@@ -213,15 +213,23 @@ v
                       >
                         {{ state.name }}
                       </option>
-                    </select>
+                    </select> -->
+                    <q-select
+                      v-model="data.state_id"
+                      :options="statesList"
+                      label="Select State"
+                      option-label="name"
+                      option-value="id"
+                      emit-value
+                      map-options
+
+                    />
                   </div>
                 </div>
                 <div class="input_wrap">
-                  <label for=""
-                    >City (select a country first)<span>*</span></label
-                  >
+                  <label for="">City (select a state first)<span>*</span></label>
                   <div class="input">
-                    <select :disabled="!cityList.length" v-model="data.city_id">
+                    <!-- <select :disabled="!cityList.length" v-model="data.city_id">
                       <option disabled value="">Select City</option>
                       <option
                         v-for="(city, index) in cityList"
@@ -230,7 +238,17 @@ v
                       >
                         {{ city.name }}
                       </option>
-                    </select>
+                    </select> -->
+                    <q-select
+                      v-model="data.city_id"
+                      :options="cityList"
+                      label="Select City"
+                      option-label="name"
+                      option-value="id"
+                      emit-value
+                      map-options
+
+                    />
                   </div>
                 </div>
                 <div class="input_wrap">
@@ -299,9 +317,9 @@ v
           </div>
           <q-separator class="q-my-md" />
           <div class="row q-mt-sm justify-between items-center">
-            <p class="smallerText">VAT</p>
+            <p class="smallerText">VAT({{ vatRate }}%)</p>
             <p class="smallText">
-              ₦{{ (cartStore.totalPrice * 0.075).toLocaleString() }}
+              ₦{{ (cartStore.totalPrice * vatRate / 100).toLocaleString() }}
             </p>
           </div>
           <q-separator class="q-my-md" />
@@ -318,7 +336,7 @@ v
               ₦{{
                 (
                   cartStore.totalPrice +
-                  cartStore.totalPrice * 0.075
+                  cartStore.totalPrice * vatRate / 100
                 ).toLocaleString()
               }}
             </p>
@@ -398,6 +416,7 @@ let cityList = ref([]);
 let countriesBaseArr = [];
 let country_code = ref("");
 let paymentKind = ref("DIRECT");
+let vatRate = ref();
 watch(
   () => authStore.token,
   (newValue, oldValue) => {
@@ -406,13 +425,40 @@ watch(
   { deep: true }
 );
 
+// watch(
+//   () => data.value.country_id,
+//   (newValue, oldValue) => {
+//     if (newValue?.name !== oldValue?.name) {
+//       Loading.show();
+//       getState(newValue);
+//       getCity(newValue);
+//     }
+//   },
+//   { deep: true }
+// );
+
 watch(
   () => data.value.country_id,
-  (newValue, oldValue) => {
-    if (newValue?.name !== oldValue?.name) {
-      Loading.show();
-      getState(newValue);
-      getCity(newValue);
+  async (newCountry, oldCountry) => {
+    // console.log("Country selected:", newCountry); // ✅ Debug log
+    if (newCountry?.id !== oldCountry?.id) {
+      data.value.state_id = ""; // Reset state
+      data.value.city_id = ""; // Reset city
+      // console.log("Fetching states for country:", newCountry.id); // ✅ Debug log
+      await getState(newCountry.id);
+    }
+  },
+  { deep: true }
+);
+
+watch(
+  () => data.value.state_id,
+  async (newState, oldState) => {
+    // console.log("State select:", newState); // ✅ Debug log
+    if (newState !== oldState) {
+      data.value.city_id = ""; // Reset city when state changes
+      // console.log("Fetching cities for state:", newState); // ✅ Debug log
+      await getCity(data.value.country_id.id, newState);
     }
   },
   { deep: true }
@@ -460,34 +506,74 @@ const onRequest = (props) => {
   }
 };
 
-const getState = async (country) => {
-  try {
-    let statesListResp = await authAxios.get(
-      `country/states?country_id=${country.id}`
-    );
+// const getState = async (country) => {
+//   try {
+//     let statesListResp = await authAxios.get(
+//       `country/states?country_id=${country.id}`
+//     );
 
-    statesList.value = statesListResp.data.data;
+//     statesList.value = statesListResp.data.data;
+//     Loading.hide();
+//   } catch (error) {
+//     console.error(error);
+//     Loading.hide();
+//   }
+// };
+
+const getState = async (countryId) => {
+  // console.log("getState() called with country ID:", countryId); // ✅ Debug log
+  try {
+    if (!countryId) {
+      console.error("Missing country ID for getState");
+      return;
+    }
+
+    Loading.show();
+    let response = await authAxios.get(`country/states?country_id=${countryId}`);
+    statesList.value = response.data.data;
+    // console.log("States received:", statesList.value); // ✅ Debug log
     Loading.hide();
   } catch (error) {
-    console.error(error);
+    console.error("Error fetching states:", error);
     Loading.hide();
   }
 };
-const getCity = async (country) => {
-  try {
-    let cityListResp = await authAxios.get(
-      `country/cities?country_id=${country.id}`
-    );
 
-    cityList.value = cityListResp.data.data.sort((a, b) =>
-      a.name.localeCompare(b.name)
-    );
+// const getCity = async (country) => {
+//   try {
+//     let cityListResp = await authAxios.get(
+//       `country/cities?country_id=${country.id}`
+//     );
+
+//     cityList.value = cityListResp.data.data.sort((a, b) =>
+//       a.name.localeCompare(b.name)
+//     );
+//     Loading.hide();
+//   } catch (error) {
+//     console.error(error);
+//     Loading.hide();
+//   }
+// };
+
+const getCity = async (countryId, stateId) => {
+  // console.log("getCity() called with country ID:", countryId, "State ID:", stateId); // ✅ Debug log
+  try {
+    if (!countryId || !stateId) {
+      console.error("Missing country or state ID for getCity");
+      return;
+    }
+
+    Loading.show();
+    let response = await authAxios.get(`country/cities?country_id=${countryId}&state_id=${stateId}`);
+    cityList.value = response.data.data;
+    // console.log("Cities received:", cityList.value); // ✅ Debug log
     Loading.hide();
   } catch (error) {
-    console.error(error);
+    console.error("Error fetching cities:", error);
     Loading.hide();
   }
 };
+
 const handleCheckout = () => {
   if (authStore.token) {
     updateShippingDetails();
@@ -718,10 +804,21 @@ const initPayment = () => {
   }
 };
 
+const fetchVAT = async () => {
+  try {
+    const response = await authAxios.get("/fees/show?code=VAT"); // Replace with actual endpoint
+    vatRate.value = response.data.data.amount;
+    // console.log(response.data.data.amount);
+  } catch (error) {
+    console.error("Error fetching VAT:", error);
+  }
+};
+
 onMounted(async () => {
   try {
     onRequest();
     getCountries();
+    fetchVAT();
   } catch (error) {
     console.error(error);
   }

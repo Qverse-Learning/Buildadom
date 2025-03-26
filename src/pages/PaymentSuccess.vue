@@ -123,6 +123,86 @@
           </div>
         </div>
       </section>
+
+      <!-- <q-dialog v-model="showModal" persistent>
+        <q-card>
+          <q-card-section class="row items-center">
+            <q-avatar icon="info" color="primary" text-color="white" />
+            <span class="q-ml-md">Your order has been successfully placed!</span>
+          </q-card-section>
+          <q-card-section>
+            <p>
+              Thank you for your purchase! You will receive an email confirmation shortly.<br>
+              Do you have a driver that would pick your order up or are we to deliver it?
+            </p>
+          </q-card-section>
+          <q-card-actions align="right">
+            <q-btn flat label="Close" color="primary" v-close-popup />
+          </q-card-actions>
+        </q-card>
+      </q-dialog> -->
+
+      <!-- First Modal: Ask user about driver -->
+      <q-dialog v-model="showModal" persistent>
+        <q-card>
+          <q-card-section class="row items-center">
+            <q-avatar icon="info" color="primary" text-color="white" />
+            <span class="q-ml-md">Your order has been successfully placed!</span>
+          </q-card-section>
+          <q-card-section>
+            <p>
+              Thank you for your purchase! You will receive an email confirmation shortly.<br />
+              Do you have a driver that would pick your order up or are we to deliver it?
+            </p>
+            <q-option-group
+              v-model="hasDriver"
+              :options="[
+                { label: 'Yes, I have a driver', value: 'yes' },
+                { label: 'No, please deliver', value: 'no' }
+              ]"
+              color="primary"
+            />
+            <p class="text-red text-bold">NOTE *</p> If we are to deliver your order extra charges will be needed to pay after the collation of your order. The charges depends on the distance of the delivery.
+          </q-card-section>
+          <q-card-actions align="right">
+            <q-btn flat label="Proceed" color="primary" @click="handleResponse" />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+
+      <!-- Second Modal: Driver Details Form -->
+      <q-dialog v-model="showDriverForm" persistent>
+        <q-card>
+          <q-card-section class="row items-center">
+            <q-avatar icon="directions_car" color="primary" text-color="white" />
+            <span class="q-ml-md">Enter Driver's Information</span>
+          </q-card-section>
+          <q-card-section>
+            <q-input v-model="driverName" label="Driver's Name" filled /><br />
+            <q-input v-model="driverPhone" label="Driver's Phone Number" filled type="tel" /> <br />
+            <p class="text-red text-bold">NOTE *</p> Your driver will be given a call to come and pick up your delivery after collation.
+          </q-card-section>
+          <q-card-actions align="right">
+            <q-btn flat label="Submit" color="primary" @click="submitDriverDetails" />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+
+      <!-- Third Modal: Agent Will Contact -->
+      <q-dialog v-model="showAgentMessage">
+        <q-card>
+          <q-card-section class="row items-center">
+            <q-avatar icon="support_agent" color="primary" text-color="white" />
+            <span class="q-ml-md">Our agent will contact you soon!</span>
+          </q-card-section>
+          <q-card-section>
+            <p>Thank you! Our logistics team will reach out to you shortly to arrange the delivery.</p>
+          </q-card-section>
+          <q-card-actions align="right">
+            <q-btn flat label="Okay" color="primary" v-close-popup />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
     </div>
     <FooterCompVue />
   </q-page>
@@ -135,6 +215,31 @@ import FooterCompVue from "src/components/FooterComp.vue";
 import { onMounted, ref } from "vue";
 let logisticsCompaniesArr = ref([]);
 let slide = ref(1);
+let showModal = ref(true); // Open the first modal by default
+let hasDriver = ref(null);
+let showDriverForm = ref(false);
+let showAgentMessage = ref(false);
+let driverName = ref("");
+let driverPhone = ref("");
+
+// Handle user response from the first modal
+const handleResponse = () => {
+  if (hasDriver.value === "yes") {
+    showModal.value = false;
+    showDriverForm.value = true;
+  } else if (hasDriver.value === "no") {
+    showModal.value = false;
+    showAgentMessage.value = true;
+  }
+};
+
+// Submit driver details
+const submitDriverDetails = () => {
+  console.log("Driver Name:", driverName.value);
+  console.log("Driver Phone:", driverPhone.value);
+  showDriverForm.value = false; // Close the modal after submission
+};
+
 const getLogisticsCompanies = async () => {
   try {
     Loading.show();

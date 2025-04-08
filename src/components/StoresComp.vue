@@ -2,8 +2,8 @@
   <div>
     <div class="stores_card">
       <div class="img">
-        <img v-if="storeData.banner" :src="storeData.banner" alt="" />
-        <img v-else :src="img" alt="" />
+        <img v-if="storeData.banner" :src="storeData.banner" alt="" class="responsive-img" />
+        <img v-else :src="img" alt="" class="responsive-img" />
         <h6 class="mediumText">{{ storeData.name }}</h6>
         <!-- <q-btn flat><i class="fa-regular fa-heart"></i></q-btn> -->
       </div>
@@ -41,4 +41,11 @@ let truncatedDescription = (description) => {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.responsive-img {
+  width: 100%;          /* Full width of parent */
+  height: 200px;        /* Fixed height (adjust as needed) */
+  object-fit: cover;    /* Maintain aspect ratio & crop overflow */
+  border-radius: 8px;   /* Optional */
+}
+</style>

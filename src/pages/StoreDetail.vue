@@ -5,7 +5,7 @@
       <div>
         <div class="hero">
           <img :src="storeDetails.banner" alt="" />
-        </div>
+        </div><br/>
         <div style="gap: 2rem" class="row items-center no-wrap justify-between">
           <div style="gap: 2rem" class="row items-center no-wrap">
             <div>
@@ -25,6 +25,16 @@
               />
             </div>
             <div class="right">
+              <q-btn
+  unelevated
+  dense
+  icon="arrow_back"
+  label="Go Back"
+  no-caps
+  text-color="white"
+  @click="$router.back()"
+  class="bg-primary q-mr-sm"
+/>
               <h4 class="bigText">{{ storeDetails.name }}</h4>
 
               <p class="smallText q-my-sm">

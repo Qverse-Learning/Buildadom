@@ -78,7 +78,7 @@
           </div>
 
           <div class="input_wrap">
-            <label for="">State (select a country) <span>*</span></label>
+            <label for="">State (Select A Country First) <span>*</span></label>
             <div class="input">
               <!-- <select :disabled="!statesList.length" v-model="data.state_id">
                 <option disabled value="">Select State</option>
@@ -103,7 +103,7 @@
             </div>
           </div>
           <div class="input_wrap">
-            <label for="">City (select a country) <span>*</span></label>
+            <label for="">LGA (Select A State First) <span>*</span></label>
             <div class="input">
               <!-- <select :disabled="!cityList.length" v-model="data.city_id">
                 <option disabled value="">Select City</option>
@@ -123,7 +123,7 @@
                 option-value="id"
                 emit-value
                 map-options
-                
+
               />
             </div>
           </div>
@@ -584,10 +584,12 @@ const setProductImage = (props) => {
   });
   authAxios
     .post(
-      `merchant/product/${addedProductData.value.id}/upload-image`,
+      //`merchant/product/${addedProductData.value.id}/upload-image`,
+      `merchant/product/image/upload`,
       {
         image: productImageFile.value,
         role: "main",
+        product_id: addedProductData.value.id,
       },
       {
         headers: {

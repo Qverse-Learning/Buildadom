@@ -2,7 +2,14 @@
   <div v-if="!loadingPage" class="container q-py-sm">
     <div class="row items-center no-wrap justify-between">
       <div class="q-py-sm">
-        <h4 class="bigText">Product Detail</h4>
+
+        <h4 class="bigText"><q-btn
+          flat
+          dense
+          icon="arrow_back"
+          @click="$router.back()"
+          class="q-mr-sm"
+        />Product Detail</h4>
         <!-- <p class="smallText">
           Kindly provide all informations below for us to help you create your
           unique store

@@ -34,12 +34,8 @@ v
         </form>
       </div>
 
+      <br />
       <div>
-        <!-- <div class="stores_list q-mb-xl">
-          <q-item v-for="(stores, index) in categoryListArr" :key="index"
-            >{{ stores.name }}
-          </q-item>
-        </div> -->
 
         <div v-if="loadingProducts" class="q-pa-md responsive_grid">
           <div v-for="n in 4" :key="n">

@@ -159,6 +159,11 @@ const routes = [
         name: "admin.list.orders",
       },
       {
+        path: "/admin/dispatched-drivers",
+        component: () => import("pages/admin/ListDrivers.vue"),
+        name: "admin.list.drivers",
+      },
+      {
         path: "/admin/fees",
         component: () => import("pages/admin/ListFees.vue"),
         name: "admin.list.fees",

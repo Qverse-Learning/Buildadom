@@ -178,7 +178,8 @@
             <span class="q-ml-md">Enter Driver's Information</span>
           </q-card-section>
           <q-card-section>
-            <q-input v-model="driverName" label="Driver's Name" filled /><br />
+            <q-input v-model="driverFirstName" label="Driver's First Name" filled /><br />
+            <q-input v-model="driverLastName" label="Driver's Last Name" filled /><br />
             <q-input v-model="driverPhone" label="Driver's Phone Number" filled type="tel" /> <br />
             <p class="text-red text-bold">NOTE *</p> Your driver will be given a call to come and pick up your delivery after collation.
           </q-card-section>
@@ -209,36 +210,182 @@
 </template>
 
 <script setup>
-import { Loading } from "quasar";
+import { Loading, useQuasar, Notify } from "quasar";
 import { authAxios } from "src/boot/axios";
 import FooterCompVue from "src/components/FooterComp.vue";
 import { onMounted, ref } from "vue";
+const $q = useQuasar();
 let logisticsCompaniesArr = ref([]);
 let slide = ref(1);
 let showModal = ref(true); // Open the first modal by default
 let hasDriver = ref(null);
 let showDriverForm = ref(false);
 let showAgentMessage = ref(false);
-let driverName = ref("");
+let driverFirstName = ref("");
+let driverLastName = ref("");
 let driverPhone = ref("");
+let country_code = ref("+234");
+const loading = ref(false);
+let errors = ref({});
+let data = ref({});
 
 // Handle user response from the first modal
-const handleResponse = () => {
-  if (hasDriver.value === "yes") {
-    showModal.value = false;
-    showDriverForm.value = true;
-  } else if (hasDriver.value === "no") {
-    showModal.value = false;
-    showAgentMessage.value = true;
+const handleResponse = async () => {
+  // if (hasDriver.value === "yes") {
+
+  //   showModal.value = false;
+  //   showDriverForm.value = true;
+  // } else if (hasDriver.value === "no") {
+  //   showModal.value = false;
+  //   showAgentMessage.value = true;
+  // }
+
+  if (!hasDriver.value) {
+    return $q.notify({
+      type: "warning",
+      message: "Please select an option before proceeding.",
+    });
+  }
+
+  try {
+    Loading.show();
+
+    if (hasDriver.value === "yes") {
+      authAxios.post(`/customer/order/has-driver`);
+
+      $q.notify({
+        type: "positive",
+        message: "Orders updated to 'has driver'.",
+      });
+
+      showModal.value = false;
+      showDriverForm.value = true;
+
+    } else if (hasDriver.value === "no") {
+      showModal.value = false;
+      showAgentMessage.value = true;
+    }
+
+  } catch (error) {
+    console.error(error);
+    $q.notify({
+      type: "negative",
+      message: "Error updating order status. Please try again.",
+    });
+  } finally {
+    Loading.hide();
   }
 };
 
 // Submit driver details
-const submitDriverDetails = () => {
-  console.log("Driver Name:", driverName.value);
-  console.log("Driver Phone:", driverPhone.value);
-  showDriverForm.value = false; // Close the modal after submission
+// const submitDriverDetails = () => {
+//   console.log("Driver First Name:", driverFirstName.value);
+//   console.log("Driver Last Name:", driverLastName.value);
+//   console.log("Driver Phone:", driverPhone.value);
+//   showDriverForm.value = false; // Close the modal after submission
+// };
+
+const formatPhoneNumber = (phone) => {
+  if (phone.startsWith("0")) {
+    return phone.slice(1);
+  } else {
+    return phone;
+  }
 };
+
+// const submitDriverDetails = async () => {
+//   const driverData = {
+//     firstname: driverFirstName.value,
+//     lastname: driverLastName.value,
+//     phone: country_code.value + formatPhoneNumber(driverPhone.value)
+//   };
+
+//   try {
+//     console.log(driverData);
+//     loading.value = true;
+//     authAxios
+//       .post("/customer/driver/add", driverData)
+//       .then((response) => {
+//         console.log(response);
+//         loading.value = false;
+//         data.value = {};
+//         Notify.create({
+//           message: response.data.message,
+//           color: "green",
+//           position: "top",
+//         });
+//         showDriverForm.value = false; // Close the modal after submission
+//       })
+//       .catch(({ response }) => {
+//         console.log(response);
+//         loading.value = false;
+//         errors.value = response.data?.errors || {};
+//         Notify.create({
+//           message: response.data?.message
+//             ? response.data?.message
+//             : "Recheck your credentials",
+//           color: "red",
+//           position: "top",
+//           actions: [{ icon: "close", color: "white" }],
+//         });
+//       });
+//   } catch (error) {
+//     console.error("Network or server error:", error);
+//   }
+// };
+
+const submitDriverDetails = async () => {
+  const driverData = {
+    firstname: driverFirstName.value,
+    lastname: driverLastName.value,
+    phone: country_code.value + formatPhoneNumber(driverPhone.value),
+  };
+
+  try {
+    console.log("Submitting driver data:", driverData);
+    loading.value = true;
+
+    const response = await authAxios.post("/customer/driver/add", driverData);
+
+    console.log("Driver added successfully:", response);
+    loading.value = false;
+    data.value = {}; // Reset form data if needed
+
+    Notify.create({
+      message: response.data?.message || "Driver added successfully",
+      color: "green",
+      position: "top",
+    });
+
+    showDriverForm.value = false; // Close the modal
+  } catch (error) {
+    loading.value = false;
+
+    const res = error.response;
+
+    if (res) {
+      console.log("Error response:", res);
+      errors.value = res.data?.errors || {};
+
+      Notify.create({
+        message: res.data?.message || "Recheck your input",
+        color: "red",
+        position: "top",
+        actions: [{ icon: "close", color: "white" }],
+      });
+    } else {
+      console.error("Unexpected error:", error);
+
+      Notify.create({
+        message: "A network or unexpected error occurred",
+        color: "red",
+        position: "top",
+        actions: [{ icon: "close", color: "white" }],
+      });
+    }
+  }
+};
+
 
 const getLogisticsCompanies = async () => {
   try {

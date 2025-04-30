@@ -142,31 +142,7 @@ v
                     ></textarea>
                   </div>
                 </div>
-                <!-- <div class="input_wrap">
-                  <label for="">City <span>*</span></label>
-                  <div class="input">
-                    <input v-model="data.city" required type="text" />
-                  </div>
-                </div> -->
-                <!-- <div class="input_wrap">
-                <label for="">State/Province<span>*</span></label>
-                <div class="input">
-                  <select v-model="data.state" >
-                    <option disabled value="">
-                      Please, select a region, state or province
-                    </option>
-                  </select>
-                </div>
-              </div> -->
 
-                <!-- <div class="input_wrap">
-                <label for="">Country<span>*</span></label>
-                <div class="input">
-                  <select v-model="data.state" >
-                    <option disabled value="">United States</option>
-                  </select>
-                </div>
-              </div> -->
                 <div class="input_wrap q-sel">
                   <label for=""> Country <span>*</span></label>
                   <div class="input">
@@ -227,22 +203,12 @@ v
                   </div>
                 </div>
                 <div class="input_wrap">
-                  <label for="">City (select a state first)<span>*</span></label>
+                  <label for="">Local Government Area (select a State first)<span>*</span></label>
                   <div class="input">
-                    <!-- <select :disabled="!cityList.length" v-model="data.city_id">
-                      <option disabled value="">Select City</option>
-                      <option
-                        v-for="(city, index) in cityList"
-                        :key="index"
-                        :value="city.id"
-                      >
-                        {{ city.name }}
-                      </option>
-                    </select> -->
                     <q-select
                       v-model="data.city_id"
                       :options="cityList"
-                      label="Select City"
+                      label="Select Local Government Area"
                       option-label="name"
                       option-value="id"
                       emit-value

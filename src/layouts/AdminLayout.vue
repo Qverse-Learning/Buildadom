@@ -95,17 +95,20 @@
               <q-item-label>Verify KYC</q-item-label>
             </q-item-section>
           </q-item>
-          <q-item
-            :to="{ name: 'admin.list.orders' }"
-            class="links"
-            v-ripple
-            clickable
-          >
+          <q-item :to="{ name: 'admin.list.orders' }" class="links" v-ripple clickable>
             <q-item-section class="avater_side" avatar>
               <i class="ri-list-unordered text-h6"></i>
             </q-item-section>
             <q-item-section>
               <q-item-label>Orders</q-item-label>
+            </q-item-section>
+          </q-item>
+          <q-item :to="{ name: 'admin.list.drivers' }" class="links" v-ripple clickable>
+            <q-item-section class="avater_side" avatar>
+              <i class="ri-list-unordered text-h6"></i>
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>Drivers</q-item-label>
             </q-item-section>
           </q-item>
           <q-item
